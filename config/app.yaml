@@ -1,0 +1,2 @@
+# The Data Source Name for the database
+dsn: "root:@/golang"
