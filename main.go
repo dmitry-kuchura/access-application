@@ -5,19 +5,17 @@ import (
 	"net/http"
 	"database/sql"
 	"./app"
+	"./models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-gonic/gin"
 )
-
-type User struct {
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
 
 var db *sql.DB
 var err error
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
+
 	// load application configurations
 	if err := app.LoadConfig("./config"); err != nil {
 		panic(fmt.Errorf("Invalid application configuration: %s", err))
@@ -32,6 +30,10 @@ func main() {
 	err = db.Ping()
 	if err != nil {
 		panic(err.Error())
+	}
+
+	if app.Config.Release == true {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.Default()
@@ -54,10 +56,12 @@ func Index(c *gin.Context) {
 }
 
 func Auth(c *gin.Context) {
-	var json User
+	var json models.User
 	if c.BindJSON(&json) == nil {
 		if json.Email == "demo" && json.Password == "password" {
-			c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
+			c.JSON(http.StatusOK, gin.H{
+				"status": "you are logged in",
+				})
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": "unauthorized",

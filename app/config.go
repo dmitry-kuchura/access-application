@@ -12,11 +12,13 @@ type appConfig struct {
 	ErrorFile  string `mapstructure:"error_file"`
 	ServerPort int    `mapstructure:"server_port"`
 	DSN        string `mapstructure:"dsn"`
+	Release    bool   `mapstructure:"release"`
 }
 
 func (config appConfig) Validate() error {
 	return validation.ValidateStruct(&config,
 		validation.Field(&config.DSN, validation.Required),
+		validation.Field(&config.Release, validation.Required),
 	)
 }
 
@@ -29,7 +31,6 @@ func LoadConfig(configPaths ...string) error {
 	v.AutomaticEnv()
 	v.SetDefault("error_file", "config/errors.yaml")
 	v.SetDefault("server_port", 8080)
-	v.SetDefault("jwt_signing_method", "HS256")
 	for _, path := range configPaths {
 		v.AddConfigPath(path)
 	}
