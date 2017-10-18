@@ -1,3 +1,4 @@
 # The Data Source Name for the database
 dsn: "root:@/golang"
-release: true
+# production / development
+release: "development"

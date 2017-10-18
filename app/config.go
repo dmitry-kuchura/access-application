@@ -12,7 +12,7 @@ type appConfig struct {
 	ErrorFile  string `mapstructure:"error_file"`
 	ServerPort int    `mapstructure:"server_port"`
 	DSN        string `mapstructure:"dsn"`
-	Release    bool   `mapstructure:"release"`
+	Release    string   `mapstructure:"release"`
 }
 
 func (config appConfig) Validate() error {

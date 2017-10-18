@@ -32,7 +32,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	if app.Config.Release == true {
+	if app.Config.Release == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
