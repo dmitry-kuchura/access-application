@@ -30,18 +30,11 @@ func (u User) GetName() string {
 	return u.Name
 }
 
-func GetToken(UserEmail string) {
-	stmt, _ := db.Prepare("INSERT `users` SET email=?,pasword=?,token=?,name=?")
-	res, _ := stmt.Exec("test@domail.com", "Swqa123123123", "sa6d7587d6df7gnh5f2jm5fjm", "Andrew")
-	id, _ := res.LastInsertId()
+func GetToken(email string) {
+	var user User
+	
+	row := db.QueryRow("SELECT `id`, `email`, `password`, `token`, `name` FROM `users` WHERE `id` = $1", email)
+	row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Token)
 
-	fmt.Println(id)
-	fmt.Println(UserEmail)
-
-	//db.QueryRow("SELECT `id`, `email`, `password`, `token`, `name` FROM users WHERE email = $1", UserEmail)
-
-	//user := new(User)
-	//result := row.Scan(&user.ID, &user.Email, &user.Password, &user.Token, &user.Name)
-	//
-	//fmt.Println(result)
+	return user
 }
