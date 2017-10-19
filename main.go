@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"database/sql"
 	"./app"
@@ -14,24 +13,6 @@ var db *sql.DB
 var err error
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
-
-	// load application configurations
-	if err := app.LoadConfig("./config"); err != nil {
-		panic(fmt.Errorf("Invalid application configuration: %s", err))
-	}
-
-	db, err = sql.Open("mysql", app.Config.DSN)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err.Error())
-	}
-
 	if app.Config.Release == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -58,13 +39,15 @@ func Index(c *gin.Context) {
 func Auth(c *gin.Context) {
 	var json models.User
 	if c.BindJSON(&json) == nil {
+		models.GetToken(json.Email)
+
 		if json.Email == "demo" && json.Password == "password" {
 			c.JSON(http.StatusOK, gin.H{
-				"status": "you are logged in",
+				"status": "You are logged in",
 				})
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"status": "unauthorized",
+				"status": "Unauthorized",
 			})
 		}
 	}
