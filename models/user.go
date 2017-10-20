@@ -3,11 +3,15 @@ package models
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/dmitry-kuchura/access-application/app"
 	"fmt"
 )
 
-var db *sql.DB
-var err error
+var db, _ = sql.Open("mysql", app.Config.DSN)
+
+var Exec = db.Exec
+var Query = db.Query
+var QueryRow = db.QueryRow
 
 type Identity interface {
 	GetID() int
@@ -30,11 +34,12 @@ func (u User) GetName() string {
 	return u.Name
 }
 
-func GetToken(email string) {
-	var user User
-	
-	row := db.QueryRow("SELECT `id`, `email`, `password`, `token`, `name` FROM `users` WHERE `id` = $1", email)
-	row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Token)
+func GetUser(email string) (*User) {
+	fmt.Print("SELECT `id`, `name`, `email`, `token` FROM `users` WHERE `email` LIKE '" + email + "'")
 
-	return user
+	u := &User{}
+	QueryRow("SELECT `id`, `name`, `email`, `token` FROM `users` WHERE `email` LIKE '" + email + "'").Scan(&u.ID, &u.Name, &u.Email, &u.Token)
+
+	fmt.Print(u)
+	return u
 }

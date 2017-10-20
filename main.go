@@ -7,6 +7,7 @@ import (
 	"./models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 var db *sql.DB
@@ -39,7 +40,9 @@ func Index(c *gin.Context) {
 func Auth(c *gin.Context) {
 	var json models.User
 	if c.BindJSON(&json) == nil {
-		models.GetToken(json.Email)
+		user := models.GetUser(json.Email)
+
+		fmt.Print(user)
 
 		if json.Email == "demo" && json.Password == "password" {
 			c.JSON(http.StatusOK, gin.H{
