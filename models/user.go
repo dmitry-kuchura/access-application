@@ -2,7 +2,6 @@ package models
 
 import (
 	//"golang.org/x/crypto/bcrypt"
-	"github.com/dmitry-kuchura/access-application/db"
 	"github.com/dmitry-kuchura/access-application/app"
 	"strconv"
 )
@@ -37,7 +36,7 @@ func (u User) GetName() string {
 func GetUser(email, password string) (*User) {
 	user := &User{}
 
-	err := db.QueryRow("SELECT `id`, `name`, `token`, `email`, `password` FROM `users` WHERE `email` LIKE ?", email).Scan(
+	err := app.QueryRow("SELECT `id`, `name`, `token`, `email`, `password` FROM `users` WHERE `email` LIKE ?", email).Scan(
 		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
 	if ValidatePassword(user.Password, password) && err != nil {
@@ -48,7 +47,7 @@ func GetUser(email, password string) (*User) {
 }
 
 func CreateUser(email, password, name string) (string, error) {
-	res, err := db.Exec(insertUser, email, password, name, app.String(10))
+	res, err := app.Exec(insertUser, email, password, name, app.String(10))
 
 	if err != nil {
 		return "", err
