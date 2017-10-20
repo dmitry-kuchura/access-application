@@ -7,8 +7,8 @@ import (
 )
 
 const insertUser = `
-	INSERT INTO users (email, token, name, role)
-	VALUES(?, ?, ?, 0) ON DUPLICATE KEY UPDATE
+	INSERT INTO users (email, password, name, token, role)
+	VALUES(?, ?, ?, ?, 0) ON DUPLICATE KEY UPDATE
 	token=VALUES(token), name=VALUES(name)
 `
 
@@ -47,11 +47,12 @@ func GetUser(email, password string) (*User) {
 }
 
 func CreateUser(email, password, name string) (string, error) {
-	res, err := app.Exec(insertUser, email, password, name, app.String(10))
+	res, err := app.Exec(insertUser, email, password, name, app.String(25))
 
-	if err != nil {
+	if err == nil {
 		return "", err
 	}
+
 	id, err := res.LastInsertId()
 	if err != nil {
 		return "", err
