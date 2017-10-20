@@ -30,6 +30,7 @@ func Index(c *gin.Context) {
 	})
 }
 
+// Регистрация пользователей
 func UserCreate(c *gin.Context) {
 	var data models.User
 	if c.BindJSON(&data) == nil {
@@ -51,6 +52,7 @@ func UserCreate(c *gin.Context) {
 
 }
 
+// Авторизация пользователей
 func Auth(c *gin.Context) {
 	var json models.User
 	if c.BindJSON(&json) == nil {
