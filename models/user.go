@@ -2,11 +2,18 @@ package models
 
 import (
 	"database/sql"
+	//"golang.org/x/crypto/bcrypt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/dmitry-kuchura/access-application/app"
+	"strconv"
 )
 
-var db, _ = sql.Open("mysql", app.Config.DSN)
+const insertUser = `
+	INSERT INTO users (email, token, name, role)
+	VALUES(?, ?, ?, 0) ON DUPLICATE KEY UPDATE
+	token=VALUES(token), name=VALUES(name)
+`
+
+var db, _ = sql.Open("mysql", "root:@/golang")
 
 var Exec = db.Exec
 var Query = db.Query
@@ -33,15 +40,34 @@ func (u User) GetName() string {
 	return u.Name
 }
 
-func GetUser(email string) (*User) {
+func GetUser(email, password string) (*User) {
 	user := &User{}
+	
+	err := QueryRow("SELECT `id`, `name`, `token`, `email`, `password` FROM `users` WHERE `email` LIKE ?", email).Scan(
+		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
-	err := db.QueryRow("SELECT `id`, `name`, `token`, `email` FROM `users` WHERE `id`=?", 1).Scan(
-		&user.ID, &user.Name, &user.Token, &user.Email)
-
-	if err != nil {
+	if ValidatePassword(user.Password, password) && err != nil {
 		return nil
 	} else {
 		return user
 	}
+}
+
+func CreateUser(email, password, name string) (string, error) {
+	res, err := Exec(insertUser, email, password, name)
+
+	if err != nil {
+		return "", err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return "", err
+	}
+	return strconv.FormatInt(id, 10), nil
+}
+
+func ValidatePassword(userPassword, password string) bool {
+
+	//hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return true
 }
