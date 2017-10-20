@@ -6,6 +6,12 @@ import (
 	"strconv"
 )
 
+const insertUser = `
+	INSERT INTO users (email, password, name, token, role)
+	VALUES(?, ?, ?, ?, 0) ON DUPLICATE KEY UPDATE
+	token=VALUES(token), name=VALUES(name)
+`
+
 type Identity interface {
 	GetID() int
 	GetName() string
@@ -41,7 +47,7 @@ func GetUser(email, password string) (*User) {
 }
 
 func CreateUser(email, password, name string) (string, error) {
-	res, err := app.Exec(app.insertUser, email, password, name, app.String(25))
+	res, err := app.Exec(insertUser, email, password, name, app.String(25))
 
 	if err == nil {
 		return "", err
