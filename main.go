@@ -2,16 +2,11 @@ package main
 
 import (
 	"net/http"
-	"database/sql"
 	"./app"
 	"./models"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-gonic/gin"
 	"fmt"
 )
-
-var db *sql.DB
-var err error
 
 func main() {
 	if app.Config.Release == "production" {
@@ -42,12 +37,12 @@ func Auth(c *gin.Context) {
 	if c.BindJSON(&json) == nil {
 		user := models.GetUser(json.Email)
 
-		fmt.Print(user)
+		fmt.Println(user)
 
 		if json.Email == "demo" && json.Password == "password" {
 			c.JSON(http.StatusOK, gin.H{
 				"status": "You are logged in",
-				})
+			})
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": "Unauthorized",

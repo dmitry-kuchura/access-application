@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/dmitry-kuchura/access-application/app"
-	"fmt"
 )
 
 var db, _ = sql.Open("mysql", app.Config.DSN)
@@ -35,11 +34,14 @@ func (u User) GetName() string {
 }
 
 func GetUser(email string) (*User) {
-	fmt.Print("SELECT `id`, `name`, `email`, `token` FROM `users` WHERE `email` LIKE '" + email + "'")
+	user := &User{}
 
-	u := &User{}
-	QueryRow("SELECT `id`, `name`, `email`, `token` FROM `users` WHERE `email` LIKE '" + email + "'").Scan(&u.ID, &u.Name, &u.Email, &u.Token)
+	err := db.QueryRow("SELECT `id`, `name`, `token`, `email` FROM `users` WHERE `id`=?", 1).Scan(
+		&user.ID, &user.Name, &user.Token, &user.Email)
 
-	fmt.Print(u)
-	return u
+	if err != nil {
+		return nil
+	} else {
+		return user
+	}
 }
