@@ -55,11 +55,9 @@ func UserCreate(c *gin.Context) {
 func Auth(c *gin.Context) {
 	var json models.User
 	if c.BindJSON(&json) == nil {
-		user := models.GetUser(json.Email, json.Password)
+		user, err := models.GetUser(json.Email, json.Password)
 
-		fmt.Println(user)
-
-		if json.Email == "demo" && json.Password == "password" {
+		if err != true {
 			c.JSON(http.StatusOK, gin.H{
 				"status": "You are logged in",
 				"token":  user.Token,

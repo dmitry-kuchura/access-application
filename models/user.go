@@ -35,18 +35,16 @@ func (u User) GetName() string {
 	return u.Name
 }
 
-func GetUser(email, password string) (*User) {
+func GetUser(email, password string) (*User, bool) {
 	user := &User{}
 
 	err := app.QueryRow("SELECT `id`, `name`, `token`, `email`, `password` FROM `users` WHERE `email` LIKE ?", email).Scan(
 		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
-	fmt.Println(validPassword(password, user.Password))
-
-	if validPassword(password, user.Password) && err != nil {
-		return user
+	if validPassword(password, user.Password) && err == nil {
+		return user, false
 	} else {
-		return nil
+		return nil, true
 	}
 }
 
@@ -74,7 +72,6 @@ func hashedPassword(password string) string {
 
 func validPassword(password, currentPassword string) bool {
 	myPassword := hashedPassword(password)
-
 
 	fmt.Println(myPassword)
 	fmt.Println(currentPassword)
