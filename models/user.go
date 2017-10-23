@@ -8,6 +8,10 @@ import (
 	"fmt"
 )
 
+const selectUser = `
+	SELECT id, name, token, email, password FROM users WHERE email LIKE ?
+`
+
 const insertUser = `
 	INSERT INTO users (email, password, name, token, role)
 	VALUES(?, ?, ?, ?, 0) ON DUPLICATE KEY UPDATE
@@ -38,7 +42,7 @@ func (u User) GetName() string {
 func GetUser(email, password string) (*User, bool) {
 	user := &User{}
 
-	err := app.QueryRow("SELECT `id`, `name`, `token`, `email`, `password` FROM `users` WHERE `email` LIKE ?", email).Scan(
+	err := app.QueryRow(selectUser, email).Scan(
 		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
 	if validPassword(password, user.Password) && err == nil {
