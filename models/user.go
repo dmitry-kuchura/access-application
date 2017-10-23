@@ -1,9 +1,11 @@
 package models
 
 import (
-	//"golang.org/x/crypto/bcrypt"
-	"github.com/dmitry-kuchura/access-application/app"
 	"strconv"
+	"crypto/md5"
+	"encoding/hex"
+	"github.com/dmitry-kuchura/access-application/app"
+	"fmt"
 )
 
 const insertUser = `
@@ -39,15 +41,17 @@ func GetUser(email, password string) (*User) {
 	err := app.QueryRow("SELECT `id`, `name`, `token`, `email`, `password` FROM `users` WHERE `email` LIKE ?", email).Scan(
 		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
-	if ValidatePassword(user.Password, password) && err != nil {
-		return nil
-	} else {
+	fmt.Println(validPassword(password, user.Password))
+
+	if validPassword(password, user.Password) && err != nil {
 		return user
+	} else {
+		return nil
 	}
 }
 
 func CreateUser(email, password, name string) (string, error) {
-	res, err := app.Exec(insertUser, email, password, name, app.String(25))
+	res, err := app.Exec(insertUser, email, hashedPassword(password), name, app.String(25))
 
 	if err == nil {
 		return "", err
@@ -60,8 +64,24 @@ func CreateUser(email, password, name string) (string, error) {
 	return strconv.FormatInt(id, 10), nil
 }
 
-func ValidatePassword(userPassword, password string) bool {
+func hashedPassword(password string) string {
+	hash := md5.New()
+	hash.Write([]byte(password))
+	hashedPassword := hex.EncodeToString(hash.Sum(nil))
 
-	//hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return true
+	return hashedPassword
+}
+
+func validPassword(password, currentPassword string) bool {
+	myPassword := hashedPassword(password)
+
+
+	fmt.Println(myPassword)
+	fmt.Println(currentPassword)
+
+	if myPassword == currentPassword {
+		return true
+	} else {
+		return false
+	}
 }

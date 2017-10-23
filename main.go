@@ -34,12 +34,11 @@ func Index(c *gin.Context) {
 func UserCreate(c *gin.Context) {
 	var data models.User
 	if c.BindJSON(&data) == nil {
-		user, err := models.CreateUser(data.Email, data.Password, data.Name)
+		_, err := models.CreateUser(data.Email, data.Password, data.Name)
 
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"success": true,
-				"user_id": user,
 				"result":  "You account was registered!",
 			})
 		} else {
@@ -58,8 +57,7 @@ func Auth(c *gin.Context) {
 	if c.BindJSON(&json) == nil {
 		user := models.GetUser(json.Email, json.Password)
 
-		fmt.Println(user.ID)
-		fmt.Println(user.Token)
+		fmt.Println(user)
 
 		if json.Email == "demo" && json.Password == "password" {
 			c.JSON(http.StatusOK, gin.H{
