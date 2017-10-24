@@ -8,7 +8,13 @@ import (
 	"./app"
 	"./models"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
+
+var WebSocketsRefresher = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 func main() {
 	if err := app.LoadConfig("./config"); err != nil {
@@ -33,6 +39,9 @@ func main() {
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
 	router.POST("/api/auth", Auth)
+	router.GET("/ws", func(c *gin.Context) {
+		WebSocketsHandler(c.Writer, c.Request)
+	})
 
 	if app.Config.ServerPort == "" {
 		router.Run()
@@ -126,5 +135,21 @@ func Auth(c *gin.Context) {
 				"status": "Unauthorized",
 			})
 		}
+	}
+}
+
+func WebSocketsHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := WebSocketsRefresher.Upgrade(w, r, nil)
+	if err != nil {
+		fmt.Println("Failed to set websocket upgrade: %+v", err)
+		return
+	}
+
+	for {
+		t, msg, err := conn.ReadMessage()
+		if err != nil {
+			break
+		}
+		conn.WriteMessage(t, msg)
 	}
 }
