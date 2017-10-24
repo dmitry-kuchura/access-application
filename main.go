@@ -8,7 +8,9 @@ import (
 	"./app"
 	"./models"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/gorilla/websocket"
+	"time"
 )
 
 var WebSocketsRefresher = websocket.Upgrader{
@@ -33,6 +35,18 @@ func main() {
 		break
 	}
 
+	config := cors.New(cors.Config{
+		AllowOrigins:     []string{"https://foo.com"},
+		AllowMethods:     []string{"PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	})
+
 	router := gin.Default()
 	router.GET("/", Index)
 	router.DELETE("/api/user-delete", UserDelete)
@@ -42,6 +56,8 @@ func main() {
 	router.GET("/ws", func(c *gin.Context) {
 		WebSocketsHandler(c.Writer, c.Request)
 	})
+
+	router.Use(config)
 
 	if app.Config.ServerPort == "" {
 		router.Run()
