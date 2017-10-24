@@ -11,9 +11,9 @@ var Config appConfig
 
 type appConfig struct {
 	ErrorFile  string `mapstructure:"error_file"`
-	ServerPort int    `mapstructure:"server_port"`
+	ServerPort string    `mapstructure:"server_port"`
 	DSN        string `mapstructure:"dsn"`
-	Release    string   `mapstructure:"release"`
+	Release    string `mapstructure:"release"`
 }
 
 func (config appConfig) Validate() error {
@@ -31,7 +31,7 @@ func LoadConfig(configPaths ...string) error {
 	v.SetEnvPrefix("restful")
 	v.AutomaticEnv()
 	v.SetDefault("error_file", "config/errors.yaml")
-	v.SetDefault("server_port", 8080)
+	v.SetDefault("server_port", "")
 	for _, path := range configPaths {
 		v.AddConfigPath(path)
 	}

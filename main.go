@@ -25,7 +25,12 @@ func main() {
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
 	router.POST("/api/auth", Auth)
-	router.Run()
+
+	if app.Config.ServerPort == "" {
+		router.Run()
+	} else {
+		router.Run(app.Config.ServerPort)
+	}
 }
 
 func Index(c *gin.Context) {
