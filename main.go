@@ -35,7 +35,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/", Index)
-	router.POST("/api/user-delete", UserDelete)
+	router.DELETE("/api/user-delete", UserDelete)
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
 	router.POST("/api/auth", Auth)
