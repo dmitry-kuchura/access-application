@@ -21,6 +21,7 @@ func main() {
 	router.GET("/", Index)
 	router.POST("/api/user-delete", UserDelete)
 	router.POST("/api/user-create", UserCreate)
+	router.POST("/api/user-change-status", UserChangeStatus)
 	router.POST("/api/auth", Auth)
 	router.Run()
 }
@@ -54,6 +55,26 @@ func UserCreate(c *gin.Context) {
 
 // Удаление пользователей
 func UserDelete(c *gin.Context) {
+	var data models.User
+	if c.BindJSON(&data) == nil {
+		_, err := models.DeleteUser(data.ID)
+
+		if err == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"success": true,
+				"result":  "You account was deleted!",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"result":  "Not deleted",
+			})
+		}
+	}
+
+}
+
+func UserChangeStatus(c *gin.Context) {
 	var data models.User
 	if c.BindJSON(&data) == nil {
 		_, err := models.DeleteUser(data.ID)
