@@ -11,7 +11,7 @@ var Config appConfig
 
 type appConfig struct {
 	ErrorFile  string `mapstructure:"error_file"`
-	ServerPort string    `mapstructure:"server_port"`
+	ServerPort string `mapstructure:"server_port"`
 	DSN        string `mapstructure:"dsn"`
 	Release    string `mapstructure:"release"`
 }
