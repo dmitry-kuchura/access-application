@@ -19,8 +19,16 @@ const (
 	token=VALUES(token), name=VALUES(name)
 	`
 
-	findUser = `
+	changeStatusUser = `
+	UPDATE  users SET status = CASE WHEN status = 0 THEN 1 ELSE 0 END WHERE id = ?
+	`
+
+	findUserByToken = `
 	SELECT id, name, token, email, password FROM users WHERE status = 1 AND token LIKE ?
+	`
+
+	findUserByID = `
+	SELECT id, name, token, email, password, status FROM users WHERE id = ?
 	`
 
 	deleteUser = `
@@ -51,6 +59,7 @@ func (u User) GetName() string {
 	return u.Name
 }
 
+// Поиск пользователя по Email
 func GetUser(email, password string) (*User, bool) {
 	user := &User{}
 
@@ -64,10 +73,11 @@ func GetUser(email, password string) (*User, bool) {
 	}
 }
 
+// Поиск пользователя по Token
 func FindUserByToken(token string) (*User, bool) {
 	user := &User{}
 
-	err := app.QueryRow(findUser, token).Scan(
+	err := app.QueryRow(findUserByToken, token).Scan(
 		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
 	if err == nil {
@@ -77,6 +87,7 @@ func FindUserByToken(token string) (*User, bool) {
 	}
 }
 
+// Создание пользователя
 func CreateUser(email, password, name string) (string, error) {
 	res, err := app.Exec(insertUser, email, hashedPassword(password), name, app.String(25))
 
@@ -91,6 +102,7 @@ func CreateUser(email, password, name string) (string, error) {
 	return strconv.FormatInt(id, 10), nil
 }
 
+// Удаление пользователя
 func DeleteUser(id int) (bool, error) {
 	_, err := app.Exec(deleteUser, id)
 
@@ -102,6 +114,26 @@ func DeleteUser(id int) (bool, error) {
 	} else {
 		return false, err
 	}
+}
+
+// Смена статуса пользователя и возврат текущего статуса
+func ChangeStatusUser(id int) (*User, bool) {
+	user := &User{}
+	_, fail := app.Exec(changeStatusUser, id)
+
+	if fail == nil {
+		err := app.QueryRow(findUserByID, id).Scan(
+			&user.ID, &user.Name, &user.Token, &user.Email, &user.Password, &user.Status)
+
+		if err == nil {
+			return user, false
+		} else {
+			return nil, true
+		}
+	} else {
+		return nil, true
+	}
+
 }
 
 func hashedPassword(password string) string {

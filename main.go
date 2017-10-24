@@ -74,20 +74,21 @@ func UserDelete(c *gin.Context) {
 
 }
 
+// Изменение статуса пользователя
 func UserChangeStatus(c *gin.Context) {
 	var data models.User
 	if c.BindJSON(&data) == nil {
-		_, err := models.DeleteUser(data.ID)
+		user, err := models.ChangeStatusUser(data.ID)
 
-		if err == nil {
+		if err == false {
 			c.JSON(http.StatusOK, gin.H{
 				"success": true,
-				"result":  "You account was deleted!",
+				"current_status":  user.Status,
 			})
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"success": false,
-				"result":  "Not deleted",
+				"result":  "Not change",
 			})
 		}
 	}
