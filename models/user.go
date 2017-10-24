@@ -22,6 +22,10 @@ const (
 	findUser = `
 	SELECT id, name, token, email, password FROM users WHERE status = 1 AND token LIKE ?
 	`
+
+	deleteUser = `
+	DELETE FROM users WHERE id = ?
+	`
 )
 
 type Identity interface {
@@ -85,6 +89,16 @@ func CreateUser(email, password, name string) (string, error) {
 		return "", err
 	}
 	return strconv.FormatInt(id, 10), nil
+}
+
+func DeleteUser(id int) bool {
+	err := app.QueryRow(deleteUser, id)
+
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
 }
 
 func hashedPassword(password string) string {
