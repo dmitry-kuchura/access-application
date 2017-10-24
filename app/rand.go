@@ -1,8 +1,8 @@
 package app
 
 import (
-	"math/rand"
 	"time"
+	"math/rand"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

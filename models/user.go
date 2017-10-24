@@ -1,11 +1,13 @@
 package models
 
 import (
+	"fmt"
 	"strconv"
+
 	"crypto/md5"
 	"encoding/hex"
+
 	"github.com/dmitry-kuchura/access-application/app"
-	"fmt"
 )
 
 const (

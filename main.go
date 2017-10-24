@@ -1,11 +1,14 @@
 package main
 
 import (
+	"fmt"
+
+	"net/http"
+
 	"./app"
 	"./models"
-	"net/http"
+
 	"github.com/gin-gonic/gin"
-	"fmt"
 )
 
 func main() {
