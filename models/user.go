@@ -91,13 +91,13 @@ func CreateUser(email, password, name string) (string, error) {
 	return strconv.FormatInt(id, 10), nil
 }
 
-func DeleteUser(id int) bool {
-	err := app.QueryRow(deleteUser, id)
+func DeleteUser(id int) (bool, error) {
+	_, err := app.Query(deleteUser, id)
 
 	if err == nil {
-		return true
+		return true, nil
 	} else {
-		return false
+		return false, err
 	}
 }
 
