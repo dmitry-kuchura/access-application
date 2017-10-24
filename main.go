@@ -7,7 +7,6 @@ import (
 
 	"./app"
 	"./models"
-
 	"github.com/gin-gonic/gin"
 )
 

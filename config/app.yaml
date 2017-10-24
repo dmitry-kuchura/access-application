@@ -1,4 +1,6 @@
 # The Data Source Name for the database
 dsn: "root:@/golang"
+# The Data Source Name for the database
+serverPort: "8080"
 # production / development
 release: "production"
