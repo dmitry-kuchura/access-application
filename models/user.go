@@ -8,15 +8,21 @@ import (
 	"fmt"
 )
 
-const selectUser = `
-	SELECT id, name, token, email, password FROM users WHERE email LIKE ?
-`
+const (
+	selectUser = `
+	SELECT id, name, token, email, password FROM users WHERE status = 1 AND email LIKE ?
+	`
 
-const insertUser = `
+	insertUser = `
 	INSERT INTO users (email, password, name, token, role)
 	VALUES(?, ?, ?, ?, 0) ON DUPLICATE KEY UPDATE
 	token=VALUES(token), name=VALUES(name)
-`
+	`
+
+	findUser = `
+	SELECT id, name, token, email, password FROM users WHERE status = 1 AND token LIKE ?
+	`
+)
 
 type Identity interface {
 	GetID() int
@@ -29,6 +35,8 @@ type User struct {
 	Email    string `form:"email" json:"email" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
 	Token    string `form:"token" json:"token"`
+	Status   int    `form:"status" json:"status"`
+	Role     int    `form:"role" json:"role"`
 }
 
 func (u User) GetID() int {
@@ -46,6 +54,19 @@ func GetUser(email, password string) (*User, bool) {
 		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
 
 	if validPassword(password, user.Password) && err == nil {
+		return user, false
+	} else {
+		return nil, true
+	}
+}
+
+func FindUserByToken(token string) (*User, bool) {
+	user := &User{}
+
+	err := app.QueryRow(findUser, token).Scan(
+		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
+
+	if err == nil {
 		return user, false
 	} else {
 		return nil, true
