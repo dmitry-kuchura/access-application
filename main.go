@@ -15,8 +15,16 @@ func main() {
 		panic(fmt.Errorf("Invalid application configuration: %s", err))
 	}
 
-	if app.Config.Release == "production" {
+	switch app.Config.Release {
+	case "DebugMode":
+		gin.SetMode(gin.DebugMode)
+		break
+	case "TestMode":
+		gin.SetMode(gin.TestMode)
+		break
+	case "ReleaseMode":
 		gin.SetMode(gin.ReleaseMode)
+		break
 	}
 
 	router := gin.Default()
@@ -89,8 +97,8 @@ func UserChangeStatus(c *gin.Context) {
 
 		if err == false {
 			c.JSON(http.StatusOK, gin.H{
-				"success": true,
-				"current_status":  user.Status,
+				"success":        true,
+				"current_status": user.Status,
 			})
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{

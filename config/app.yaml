@@ -1,6 +1,6 @@
 # The Data Source Name for the database
 dsn: "root:@/golang"
-# port Web application
+# port Web application (default :8080)
 server_port: ""
-# production / development
-release: "development"
+# DebugMode / ReleaseMode / TestMode
+release: "DebugMode"
