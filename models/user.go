@@ -36,8 +36,8 @@ type Identity interface {
 type User struct {
 	ID       int    `form:"id" json:"id"`
 	Name     string `form:"name" json:"name"`
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
+	Email    string `form:"email" json:"email"`
+	Password string `form:"password" json:"password"`
 	Token    string `form:"token" json:"token"`
 	Status   int    `form:"status" json:"status"`
 	Role     int    `form:"role" json:"role"`
@@ -92,7 +92,10 @@ func CreateUser(email, password, name string) (string, error) {
 }
 
 func DeleteUser(id int) (bool, error) {
-	_, err := app.Query(deleteUser, id)
+	_, err := app.Exec(deleteUser, id)
+
+	fmt.Println(err)
+	fmt.Println(id)
 
 	if err == nil {
 		return true, nil
