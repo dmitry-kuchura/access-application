@@ -1,9 +1,10 @@
 package models
 
 import (
-	//"strconv"
+	"strconv"
+	"errors"
+	"database/sql"
 	"github.com/dmitry-kuchura/access-application/app"
-	"fmt"
 )
 
 const (
@@ -26,26 +27,40 @@ type Domains struct {
 }
 
 func CreateDomain(name, url string) (string, error) {
+	if CheckDomain(name, url) {
+		res, err := app.Exec(insertDomain, name, url)
 
-	CheckDomain(name, url)
-
-	//res, err := app.Exec(insertDomain, name, url)
-	//
-	//id, err := res.LastInsertId()
-	//if err != nil {
-	//	return "", err
-	//}
-	//return strconv.FormatInt(id, 10), nil
-
-	return "", nil
+		id, err := res.LastInsertId()
+		if err != nil {
+			return "", err
+		}
+		return strconv.FormatInt(id, 10), nil
+	} else {
+		err := errors.New("Domain was already created!")
+		return "", err
+	}
 }
 
 func CheckDomain(name, url string) bool {
+	res, _ := app.Query(checkDomain, name, url)
 
-	res, err := app.Query(checkDomain, name, url)
+	if countQuery(res) >= 1 {
+		return false
+	} else {
+		return true
+	}
+}
 
-	fmt.Println("Total count:", app.checkCountRows(res))
-	fmt.Println(err)
+func countQuery(rows *sql.Rows) (count int) {
+	for rows.Next() {
+		err := rows.Scan(&count)
+		checkErr(err)
+	}
+	return count
+}
 
-	return true
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

@@ -11,7 +11,7 @@ var Exec = db.Exec
 var Query = db.Query
 var QueryRow = db.QueryRow
 
-func checkCountRows(rows *sql.Rows) (count int) {
+func checkCount(rows *sql.Rows) (count int) {
 	for rows.Next() {
 		err := rows.Scan(&count)
 		checkErr(err)
