@@ -93,10 +93,6 @@ func FindUserByToken(token string) (*User, bool) {
 func CreateUser(email, password, name string) (string, error) {
 	res, err := app.Exec(insertUser, email, hashedPassword(password), name, app.String(25))
 
-	if err == nil {
-		return "", err
-	}
-
 	id, err := res.LastInsertId()
 	if err != nil {
 		return "", err

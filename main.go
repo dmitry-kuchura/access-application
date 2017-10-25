@@ -49,10 +49,13 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/", Index)
+	router.POST("/api/auth", Auth)
+
 	router.DELETE("/api/user-delete", UserDelete)
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
-	router.POST("/api/auth", Auth)
+
+	router.POST("/api/domain-create", DomainCreate)
 	router.GET("/ws", func(c *gin.Context) {
 		WebSocketsHandler(c.Writer, c.Request)
 	})
@@ -70,6 +73,25 @@ func Index(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"success": true,
 	})
+}
+
+// Авторизация пользователей
+func Auth(c *gin.Context) {
+	var json models.User
+	if c.BindJSON(&json) == nil {
+		user, err := models.GetUser(json.Email, json.Password)
+
+		if err != true {
+			c.JSON(http.StatusOK, gin.H{
+				"status": "You are logged in",
+				"token":  user.Token,
+			})
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"status": "Unauthorized",
+			})
+		}
+	}
 }
 
 // Регистрация пользователей
@@ -90,7 +112,6 @@ func UserCreate(c *gin.Context) {
 			})
 		}
 	}
-
 }
 
 // Удаление пользователей
@@ -111,7 +132,6 @@ func UserDelete(c *gin.Context) {
 			})
 		}
 	}
-
 }
 
 // Изменение статуса пользователя
@@ -132,23 +152,23 @@ func UserChangeStatus(c *gin.Context) {
 			})
 		}
 	}
-
 }
 
-// Авторизация пользователей
-func Auth(c *gin.Context) {
-	var json models.User
-	if c.BindJSON(&json) == nil {
-		user, err := models.GetUser(json.Email, json.Password)
+func DomainCreate(c *gin.Context) {
+	var data models.Domains
+	if c.BindJSON(&data) == nil {
+		id, err := models.CreateDomain(data.Name, data.Url)
 
-		if err != true {
+		if err == nil {
 			c.JSON(http.StatusOK, gin.H{
-				"status": "You are logged in",
-				"token":  user.Token,
+				"success": true,
+				"domain":  id,
+				"result":  "Domain was registered!",
 			})
 		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"status": "Unauthorized",
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"result":  "Not created",
 			})
 		}
 	}
