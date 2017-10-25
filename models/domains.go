@@ -44,7 +44,7 @@ func CheckDomain(name, url string) bool {
 
 	res, err := app.Query(checkDomain, name, url)
 
-	fmt.Println("Total count:", app.checkCount(res))
+	fmt.Println("Total count:", app.checkCountRows(res))
 	fmt.Println(err)
 
 	return true
