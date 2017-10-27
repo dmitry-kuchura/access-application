@@ -48,7 +48,6 @@ func main() {
 	})
 
 	router := gin.Default()
-
 	router.GET("/", Index)
 	router.NoRoute(PageNotFound)
 
@@ -59,6 +58,7 @@ func main() {
 	router.GET("/api/user-list", UsersGetList)
 
 	router.POST("/api/domain-create", DomainCreate)
+
 	router.GET("/ws", func(c *gin.Context) {
 		WebSocketsHandler(c.Writer, c.Request)
 	})
@@ -72,7 +72,7 @@ func main() {
 	}
 }
 
-// Custom Not Found (404) page
+// Кастомная Not Found (404)
 func PageNotFound(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"error": 404,
@@ -202,6 +202,7 @@ func DomainCreate(c *gin.Context) {
 	}
 }
 
+// Хандлер для WebSocket'ов
 func WebSocketsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := WebSocketsRefresher.Upgrade(w, r, nil)
 	if err != nil {
