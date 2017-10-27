@@ -151,9 +151,9 @@ func ChangeStatusUser(id int) (*User, bool) {
 
 }
 
-// Вторая и более страница
+// Получение списка пользователей с пагинацией
 func AllUsers(param string) (users []User, count int, err error) {
-	limit := 1
+	limit := 15
 	page, _ := strconv.Atoi(param)
 	offset := (page - 1) * limit
 
@@ -161,24 +161,24 @@ func AllUsers(param string) (users []User, count int, err error) {
 
 	row, _ := app.Query(countAll)
 
-	all := app.CountRows(row)
+	allUsers := app.CountRows(row)
 
-	fmt.Println(all)
+	pages := allUsers / limit
 
 	if err != nil {
-		return users, all, err
+		return users, pages, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		u := User{}
 		err = rows.Scan(&u.ID, &u.Name, &u.Email, &u.Token, &u.Status, &u.Role)
 		if err != nil {
-			return users, all, err
+			return users, pages, err
 		}
 		users = append(users, u)
 	}
 	err = rows.Err()
-	return users, all, err
+	return users, pages, err
 }
 
 func hashedPassword(password string) string {
