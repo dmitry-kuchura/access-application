@@ -55,7 +55,7 @@ func main() {
 	router.DELETE("/api/user-delete", UserDelete)
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
-	router.GET("/api/user-list", UsersGetList)
+	router.GET("/api/user-list/:page", UsersGetListPage)
 
 	router.POST("/api/domain-create", DomainCreate)
 
@@ -75,7 +75,7 @@ func main() {
 // Кастомная Not Found (404)
 func PageNotFound(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"error": 404,
+		"error":   404,
 		"message": "Page not found",
 	})
 }
@@ -166,12 +166,13 @@ func UserChangeStatus(c *gin.Context) {
 }
 
 // Плучение полного списка пользователей
-func UsersGetList(c *gin.Context) {
-	list, err := models.AllUsers()
+func UsersGetListPage(c *gin.Context) {
+	list, count, err := models.AllUsers(c.Param("page"))
 
 	if err == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
+			"pages": count,
 			"users":   list,
 		})
 	} else {

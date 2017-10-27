@@ -20,6 +20,14 @@ func CountRows(rows *sql.Rows) (count int) {
 	return count
 }
 
+func CountRowsUsers(rows *sql.Rows) (count int) {
+	for rows.Next() {
+		err := rows.Scan(&count)
+		CheckErr(err)
+	}
+	return count
+}
+
 func CheckErr(err error) {
 	if err != nil {
 		panic(err)

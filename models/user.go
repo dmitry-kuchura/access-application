@@ -40,6 +40,12 @@ const (
 	selectAll = `
 	SELECT id, name, email, token, status, role
 	FROM users
+	LIMIT ?
+	OFFSET ?
+	`
+	countAll = `
+	SELECT COUNT(*) as count
+	FROM users
 	`
 
 	selectAllByFilter = `
@@ -145,26 +151,34 @@ func ChangeStatusUser(id int) (*User, bool) {
 
 }
 
-func AllUsers() (users []User, err error) {
-	return scan(selectAll)
-}
+// Вторая и более страница
+func AllUsers(param string) (users []User, count int, err error) {
+	limit := 1
+	page, _ := strconv.Atoi(param)
+	offset := (page - 1) * limit
 
-func scan(query string) (users []User, err error) {
-	rows, err := app.Query(query)
+	rows, err := app.Query(selectAll, limit, offset)
+
+	row, _ := app.Query(countAll)
+
+	all := app.CountRows(row)
+
+	fmt.Println(all)
+
 	if err != nil {
-		return users, err
+		return users, all, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		u := User{}
 		err = rows.Scan(&u.ID, &u.Name, &u.Email, &u.Token, &u.Status, &u.Role)
 		if err != nil {
-			return users, err
+			return users, all, err
 		}
 		users = append(users, u)
 	}
 	err = rows.Err()
-	return users, err
+	return users, all, err
 }
 
 func hashedPassword(password string) string {
