@@ -58,6 +58,8 @@ func main() {
 	router.GET("/api/user-list/:page", UsersGetListPage)
 
 	router.POST("/api/domain-create", DomainCreate)
+	//router.DELETE("/api/domain-delete", DomainDelete)
+	router.GET("/api/domain-list/:page", DomainList)
 
 	router.GET("/ws", func(c *gin.Context) {
 		WebSocketsHandler(c.Writer, c.Request)
@@ -74,7 +76,7 @@ func main() {
 
 // Кастомная Not Found (404)
 func PageNotFound(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusNotFound, gin.H{
 		"error":   404,
 		"message": "Page not found",
 	})
@@ -172,7 +174,7 @@ func UsersGetListPage(c *gin.Context) {
 	if err == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
-			"pages": count,
+			"pages":   count,
 			"users":   list,
 		})
 	} else {
@@ -200,6 +202,23 @@ func DomainCreate(c *gin.Context) {
 				"result":  "Not created",
 			})
 		}
+	}
+}
+
+// Список доменов
+func DomainList(c *gin.Context) {
+	list, count, err := models.AllDomains(c.Param("page"))
+
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"pages":   count,
+			"domains": list,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+		})
 	}
 }
 

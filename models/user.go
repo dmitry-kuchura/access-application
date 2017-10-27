@@ -37,13 +37,13 @@ const (
 	DELETE FROM users WHERE id = ?
 	`
 
-	selectAll = `
+	selectAllUsers = `
 	SELECT id, name, email, token, status, role
 	FROM users
 	LIMIT ?
 	OFFSET ?
 	`
-	countAll = `
+	countAllUsers = `
 	SELECT COUNT(*) as count
 	FROM users
 	`
@@ -157,9 +157,9 @@ func AllUsers(param string) (users []User, count int, err error) {
 	page, _ := strconv.Atoi(param)
 	offset := (page - 1) * limit
 
-	rows, err := app.Query(selectAll, limit, offset)
+	rows, err := app.Query(selectAllUsers, limit, offset)
 
-	row, _ := app.Query(countAll)
+	row, _ := app.Query(countAllUsers)
 
 	allUsers := app.CountRows(row)
 
