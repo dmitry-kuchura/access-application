@@ -39,12 +39,7 @@ func main() {
 	config := cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"*"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		//AllowOriginFunc: func(origin string) bool {
-		//	return origin == "https://github.com"
-		//},
+		AllowHeaders:     []string{"*"},
 		MaxAge: 12 * time.Hour,
 	})
 
