@@ -23,8 +23,6 @@ func main() {
 		panic(fmt.Errorf("Invalid application configuration: %s", err))
 	}
 
-	InitApp(app.Config.DSN)
-
 	switch app.Config.Release {
 	case "DebugMode":
 		gin.SetMode(gin.DebugMode)
@@ -70,11 +68,6 @@ func main() {
 	} else {
 		router.Run(app.Config.ServerPort)
 	}
-}
-
-func InitApp(database string) (string) {
-	var Global = database
-	return Global
 }
 
 func Index(c *gin.Context) {
