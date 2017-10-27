@@ -58,7 +58,7 @@ func main() {
 	router.GET("/api/user-list/:page", UsersGetListPage)
 
 	router.POST("/api/domain-create", DomainCreate)
-	//router.DELETE("/api/domain-delete", DomainDelete)
+	router.DELETE("/api/domain-delete", DomainDelete)
 	router.GET("/api/domain-list/:page", DomainList)
 
 	router.GET("/ws", func(c *gin.Context) {
@@ -219,6 +219,26 @@ func DomainList(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 		})
+	}
+}
+
+// Удаление домена
+func DomainDelete(c *gin.Context)  {
+	var data models.Domains
+	if c.BindJSON(&data) == nil {
+		_, err := models.DeleteDomain(data.ID)
+
+		if err == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"success": true,
+				"result":  "Domain was deleted!",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"result":  "Not deleted",
+			})
+		}
 	}
 }
 

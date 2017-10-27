@@ -27,6 +27,10 @@ const (
 	SELECT COUNT(*) as count
 	FROM domains
 	`
+
+	deleteDomain = `
+	DELETE FROM users WHERE id = ?
+	`
 )
 
 type Domains struct {
@@ -52,7 +56,7 @@ func CreateDomain(name, url string) (string, error) {
 	}
 }
 
-func AllDomains(param string) (domains []Domains, count int, err error)  {
+func AllDomains(param string) (domains []Domains, count int, err error) {
 	limit := 15
 	page, _ := strconv.Atoi(param)
 	offset := (page - 1) * limit
@@ -81,6 +85,15 @@ func AllDomains(param string) (domains []Domains, count int, err error)  {
 	return domains, pages, err
 }
 
+func DeleteDomain(id int) (bool, error) {
+	_, err := app.Exec(deleteDomain, id)
+
+	if err == nil {
+		return true, nil
+	} else {
+		return false, err
+	}
+}
 
 func CheckDomain(name, url string) bool {
 	res, _ := app.Query(checkDomain, name, url)
