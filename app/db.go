@@ -5,21 +5,22 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db, _ = sql.Open("mysql", "root:@/golang")
-
-var Exec = db.Exec
-var Query = db.Query
-var QueryRow = db.QueryRow
+var (
+	db, _ = sql.Open("mysql", "root:@/golang")
+	Exec = db.Exec
+	Query = db.Query
+	QueryRow = db.QueryRow
+)
 
 func CountRows(rows *sql.Rows) (count int) {
 	for rows.Next() {
 		err := rows.Scan(&count)
-		checkErr(err)
+		CheckErr(err)
 	}
 	return count
 }
 
-func checkErr(err error) {
+func CheckErr(err error) {
 	if err != nil {
 		panic(err)
 	}
