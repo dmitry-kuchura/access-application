@@ -108,7 +108,7 @@ func UserCreate(c *gin.Context) {
 		_, err := models.CreateUser(data.Email, data.Password, data.Name)
 
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
+			c.JSON(http.StatusCreated, gin.H{
 				"success": true,
 				"result":  "You account was registered!",
 			})
@@ -167,7 +167,7 @@ func DomainCreate(c *gin.Context) {
 		id, err := models.CreateDomain(data.Name, data.Url)
 
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
+			c.JSON(http.StatusCreated, gin.H{
 				"success": true,
 				"domain":  id,
 				"result":  "Domain was registered!",
