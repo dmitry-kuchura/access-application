@@ -3,8 +3,7 @@ package models
 import (
 	"strconv"
 	"errors"
-	"database/sql"
-	"github.com/dmitry-kuchura/access-application/app"
+	"../app"
 )
 
 const (
@@ -44,23 +43,9 @@ func CreateDomain(name, url string) (string, error) {
 func CheckDomain(name, url string) bool {
 	res, _ := app.Query(checkDomain, name, url)
 
-	if countQuery(res) >= 1 {
+	if app.CountRows(res) >= 1 {
 		return false
 	} else {
 		return true
-	}
-}
-
-func countQuery(rows *sql.Rows) (count int) {
-	for rows.Next() {
-		err := rows.Scan(&count)
-		checkErr(err)
-	}
-	return count
-}
-
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
 	}
 }

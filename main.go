@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"net/http"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gorilla/websocket"
-	"time"
 )
 
 var WebSocketsRefresher = websocket.Upgrader{
