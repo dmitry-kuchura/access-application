@@ -36,6 +36,17 @@ const (
 	deleteUser = `
 	DELETE FROM users WHERE id = ?
 	`
+
+	selectAll = `
+	SELECT id, name, email, token, status, role
+	FROM users
+	`
+
+	selectAllByFilter = `
+	SELECT id, name, email, token, status, role
+	FROM users
+	WHERE status = ?
+	`
 )
 
 type Identity interface {
@@ -132,6 +143,28 @@ func ChangeStatusUser(id int) (*User, bool) {
 		return nil, true
 	}
 
+}
+
+func AllUsers() (users []User, err error) {
+	return scan(selectAll)
+}
+
+func scan(query string) (users []User, err error) {
+	rows, err := app.Query(query)
+	if err != nil {
+		return users, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		u := User{}
+		err = rows.Scan(&u.ID, &u.Name, &u.Email, &u.Token, &u.Status, &u.Role)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, u)
+	}
+	err = rows.Err()
+	return users, err
 }
 
 func hashedPassword(password string) string {

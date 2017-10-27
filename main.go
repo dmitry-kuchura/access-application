@@ -56,6 +56,7 @@ func main() {
 	router.DELETE("/api/user-delete", UserDelete)
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
+	router.GET("/api/user-list", UsersGetList)
 
 	router.POST("/api/domain-create", DomainCreate)
 	router.GET("/ws", func(c *gin.Context) {
@@ -161,6 +162,23 @@ func UserChangeStatus(c *gin.Context) {
 	}
 }
 
+// Плучение полного списка пользователей
+func UsersGetList(c *gin.Context) {
+	list, err := models.AllUsers()
+
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"users":   list,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+		})
+	}
+}
+
+// Создание домена
 func DomainCreate(c *gin.Context) {
 	var data models.Domains
 	if c.BindJSON(&data) == nil {
