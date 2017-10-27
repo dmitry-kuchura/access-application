@@ -4,12 +4,13 @@ import (
 	"strconv"
 	"errors"
 	"../app"
+	"fmt"
 )
 
 const (
 	insertDomain = `
-	INSERT INTO domains (name, url, status)
-	VALUES(?, ?, 1) ON DUPLICATE KEY UPDATE
+	INSERT INTO domains (name, url, status, created_at, updated_at)
+	VALUES(?, ?, 1, NOW(), NOW()) ON DUPLICATE KEY UPDATE
 	name = VALUES(name)
 	`
 
@@ -18,7 +19,7 @@ const (
 	`
 
 	selectAllDomains = `
-	SELECT id, name, url, status
+	SELECT id, name, url, status, updated_at
 	FROM domains
 	LIMIT ?
 	OFFSET ?
@@ -34,10 +35,11 @@ const (
 )
 
 type Domains struct {
-	ID     int    `form:"id" json:"id"`
-	Name   string `form:"name" json:"name"`
-	Url    string `form:"url" json:"url"`
-	Status int    `form:"status" json:"status"`
+	ID      int    `form:"id" json:"id"`
+	Name    string `form:"name" json:"name"`
+	Url     string `form:"url" json:"url"`
+	Status  int    `form:"status" json:"status"`
+	Updated string `form:"updated_at" json:"updated_at"`
 }
 
 // Добавление домена
@@ -63,6 +65,9 @@ func AllDomains(param string) (domains []Domains, count int, err error) {
 
 	rows, err := app.Query(selectAllDomains, limit, offset)
 
+	fmt.Println(rows)
+	fmt.Println(err)
+
 	row, _ := app.Query(countAllDomains)
 
 	allDomain := app.CountRows(row)
@@ -72,10 +77,11 @@ func AllDomains(param string) (domains []Domains, count int, err error) {
 	if err != nil {
 		return domains, pages, err
 	}
+
 	defer rows.Close()
 	for rows.Next() {
 		d := Domains{}
-		err = rows.Scan(&d.ID, &d.Name, &d.Url, &d.Status)
+		err = rows.Scan(&d.ID, &d.Name, &d.Url, &d.Status, &d.Updated)
 		if err != nil {
 			return domains, pages, err
 		}
