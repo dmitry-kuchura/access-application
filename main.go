@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gorilla/websocket"
+	"log"
 )
 
 var WebSocketsRefresher = websocket.Upgrader{
@@ -47,30 +48,60 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	})
 
-	router := gin.Default()
+	router := gin.New()
+
+	// Global middleware
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
 	router.GET("/", Index)
 	router.NoRoute(PageNotFound)
 
 	router.POST("/api/auth", Auth)
-	router.DELETE("/api/user-delete", UserDelete)
-	router.POST("/api/user-create", UserCreate)
-	router.POST("/api/user-change-status", UserChangeStatus)
-	router.GET("/api/user-list/:page", UsersGetListPage)
 
-	router.POST("/api/domain-create", DomainCreate)
-	router.DELETE("/api/domain-delete", DomainDelete)
-	router.GET("/api/domain-list/:page", DomainList)
+	user := router.Group("/api/user")
+	user.Use(AuthRequired())
+	{
+		user.DELETE("delete", UserDelete)
+		user.POST("create", UserCreate)
+		user.POST("change-status", UserChangeStatus)
+		user.GET("list/:page", UsersGetListPage)
+	}
+
+	domains := router.Group("/api/domain")
+	domains.Use(AuthRequired())
+	{
+		domains.POST("create", DomainCreate)
+		domains.DELETE("delete", DomainDelete)
+		domains.GET("list/:page", DomainList)
+	}
 
 	router.GET("/ws", func(c *gin.Context) {
 		WebSocketsHandler(c.Writer, c.Request)
 	})
-
 	router.Use(config)
 
 	if app.Config.ServerPort == "" {
 		router.Run()
 	} else {
 		router.Run(app.Config.ServerPort)
+	}
+}
+
+// Middleware
+func AuthRequired() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Println("before authRequired")
+		token := c.Request.Header.Get("Auth-Token")
+
+		_, err := models.FindUserByToken(token)
+
+		// No token No Party
+		if err == true {
+			log.Println("no auth")
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+		log.Println("after authRequired")
 	}
 }
 
@@ -223,7 +254,7 @@ func DomainList(c *gin.Context) {
 }
 
 // Удаление домена
-func DomainDelete(c *gin.Context)  {
+func DomainDelete(c *gin.Context) {
 	var data models.Domains
 	if c.BindJSON(&data) == nil {
 		_, err := models.DeleteDomain(data.ID)

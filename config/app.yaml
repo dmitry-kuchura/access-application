@@ -3,4 +3,4 @@ dsn: "root:@/golang"
 # port Web application (default :8080)
 server_port: ""
 # DebugMode / ReleaseMode / TestMode
-release: "ReleaseMode"
+release: "DebugMode"

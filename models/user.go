@@ -97,7 +97,8 @@ func FindUserByToken(token string) (*User, bool) {
 	user := &User{}
 
 	err := app.QueryRow(findUserByToken, token).Scan(
-		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password)
+		&user.ID, &user.Name, &user.Token, &user.Email, &user.Password,
+	)
 
 	if err == nil {
 		return user, false
