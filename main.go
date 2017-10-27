@@ -68,6 +68,7 @@ func main() {
 	domains.Use(AuthRequired())
 	{
 		domains.POST("create", controllers.DomainCreate)
+		domains.GET("view/:id", controllers.DomainView)
 		domains.GET("list/:page", controllers.DomainList)
 		domains.DELETE("delete", controllers.DomainDelete)
 	}
@@ -90,6 +91,7 @@ func AuthRequired() gin.HandlerFunc {
 		log.Println("before authRequired")
 		token := c.Request.Header.Get("Auth-Token")
 
+		log.Println("Token: " + token)
 		_, err := models.FindUserByToken(token)
 
 		// No token No Party

@@ -3,6 +3,7 @@ package models
 import (
 	"strconv"
 	"errors"
+	
 	"../app"
 )
 
@@ -29,16 +30,22 @@ const (
 	`
 
 	deleteDomain = `
-	DELETE FROM users WHERE id = ?
+	DELETE FROM domains WHERE id = ?
+	`
+
+	selectDomain = `
+	SELECT id, name, url, status, updated_at FROM domains WHERE id = ?
 	`
 )
 
-type Domains struct {
-	ID      int    `form:"id" json:"id"`
-	Name    string `form:"name" json:"name"`
-	Url     string `form:"url" json:"url"`
-	Status  int    `form:"status" json:"status"`
-	Updated string `form:"updated_at" json:"updated_at"`
+type Domain struct {
+	ID       int        `form:"id" json:"id"`
+	Name     string     `form:"name" json:"name"`
+	Url      string     `form:"url" json:"url"`
+	Status   int        `form:"status" json:"status"`
+	Updated  string     `form:"updated_at" json:"updated_at"`
+	Ftp      []Ftp      `form:"ftp" json:"ftp"`
+	Database []Database `form:"database" json:"database"`
 }
 
 // Добавление домена
@@ -57,7 +64,8 @@ func CreateDomain(name, url string) (string, error) {
 	}
 }
 
-func AllDomains(param string) (domains []Domains, count int, err error) {
+// Список доменов
+func AllDomains(param string) (domains []Domain, count int, err error) {
 	limit := 15
 	page, _ := strconv.Atoi(param)
 	offset := (page - 1) * limit
@@ -76,7 +84,7 @@ func AllDomains(param string) (domains []Domains, count int, err error) {
 
 	defer rows.Close()
 	for rows.Next() {
-		d := Domains{}
+		d := Domain{}
 		err = rows.Scan(&d.ID, &d.Name, &d.Url, &d.Status, &d.Updated)
 		if err != nil {
 			return domains, pages, err
@@ -87,6 +95,7 @@ func AllDomains(param string) (domains []Domains, count int, err error) {
 	return domains, pages, err
 }
 
+// Удаление домена
 func DeleteDomain(id int) (bool, error) {
 	_, err := app.Exec(deleteDomain, id)
 
@@ -105,4 +114,23 @@ func CheckDomain(name, url string) bool {
 	} else {
 		return true
 	}
+}
+
+// Получение конкретного домена
+func GetDomain(param string) (domains []Domain, err error) {
+	row, err := app.Query(selectDomain, param)
+
+	defer row.Close()
+
+	for row.Next() {
+		d := Domain{}
+		err = row.Scan(&d.ID, &d.Name, &d.Url, &d.Status, &d.Updated)
+		if err != nil {
+			return domains, err
+		}
+		domains = append(domains, d)
+	}
+	err = row.Err()
+
+	return domains, err
 }

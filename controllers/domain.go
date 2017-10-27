@@ -5,11 +5,12 @@ import (
 
 	"../models"
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 // Создание домена
 func DomainCreate(c *gin.Context) {
-	var data models.Domains
+	var data models.Domain
 	if c.BindJSON(&data) == nil {
 		id, err := models.CreateDomain(data.Name, data.Url)
 
@@ -47,7 +48,7 @@ func DomainList(c *gin.Context) {
 
 // Удаление домена
 func DomainDelete(c *gin.Context) {
-	var data models.Domains
+	var data models.Domain
 	if c.BindJSON(&data) == nil {
 		_, err := models.DeleteDomain(data.ID)
 
@@ -63,4 +64,11 @@ func DomainDelete(c *gin.Context) {
 			})
 		}
 	}
+}
+
+func DomainView(c *gin.Context)  {
+	data, err := models.GetDomain(c.Param("page"))
+
+	fmt.Println(data)
+	fmt.Println(err)
 }
