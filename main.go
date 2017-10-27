@@ -8,6 +8,7 @@ import (
 
 	"./app"
 	"./models"
+	"./controllers"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gorilla/websocket"
@@ -37,10 +38,10 @@ func main() {
 	}
 
 	config := cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		MaxAge: 12 * time.Hour,
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"*"},
+		AllowHeaders: []string{"*"},
+		MaxAge:       12 * time.Hour,
 	})
 
 	router := gin.New()
@@ -57,18 +58,18 @@ func main() {
 	user := router.Group("/api/user")
 	user.Use(AuthRequired())
 	{
-		user.DELETE("delete", UserDelete)
-		user.POST("create", UserCreate)
-		user.POST("change-status", UserChangeStatus)
-		user.GET("list/:page", UsersGetListPage)
+		user.DELETE("delete", controllers.UserDelete)
+		user.POST("create", controllers.UserCreate)
+		user.POST("change-status", controllers.UserChangeStatus)
+		user.GET("list/:page", controllers.UserList)
 	}
 
 	domains := router.Group("/api/domain")
 	domains.Use(AuthRequired())
 	{
-		domains.POST("create", DomainCreate)
-		domains.DELETE("delete", DomainDelete)
-		domains.GET("list/:page", DomainList)
+		domains.POST("create", controllers.DomainCreate)
+		domains.GET("list/:page", controllers.DomainList)
+		domains.DELETE("delete", controllers.DomainDelete)
 	}
 
 	router.GET("/ws", func(c *gin.Context) {
@@ -128,141 +129,6 @@ func Auth(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": "Unauthorized",
-			})
-		}
-	}
-}
-
-// Регистрация пользователей
-func UserCreate(c *gin.Context) {
-	var data models.User
-	if c.BindJSON(&data) == nil {
-		_, err := models.CreateUser(data.Email, data.Password, data.Name)
-
-		if err == nil {
-			c.JSON(http.StatusCreated, gin.H{
-				"success": true,
-				"result":  "You account was registered!",
-			})
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"success": false,
-				"result":  "Not registered",
-			})
-		}
-	}
-}
-
-// Удаление пользователей
-func UserDelete(c *gin.Context) {
-	var data models.User
-	if c.BindJSON(&data) == nil {
-		_, err := models.DeleteUser(data.ID)
-
-		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
-				"success": true,
-				"result":  "You account was deleted!",
-			})
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"result":  "Not deleted",
-			})
-		}
-	}
-}
-
-// Изменение статуса пользователя
-func UserChangeStatus(c *gin.Context) {
-	var data models.User
-	if c.BindJSON(&data) == nil {
-		user, err := models.ChangeStatusUser(data.ID)
-
-		if err == false {
-			c.JSON(http.StatusOK, gin.H{
-				"success":        true,
-				"current_status": user.Status,
-			})
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"result":  "Not change",
-			})
-		}
-	}
-}
-
-// Плучение полного списка пользователей
-func UsersGetListPage(c *gin.Context) {
-	list, count, err := models.AllUsers(c.Param("page"))
-
-	if err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"pages":   count,
-			"users":   list,
-		})
-	} else {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-		})
-	}
-}
-
-// Создание домена
-func DomainCreate(c *gin.Context) {
-	var data models.Domains
-	if c.BindJSON(&data) == nil {
-		id, err := models.CreateDomain(data.Name, data.Url)
-
-		if err == nil {
-			c.JSON(http.StatusCreated, gin.H{
-				"success": true,
-				"domain":  id,
-				"result":  "Domain was registered!",
-			})
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"result":  "Not created",
-			})
-		}
-	}
-}
-
-// Список доменов
-func DomainList(c *gin.Context) {
-	list, count, err := models.AllDomains(c.Param("page"))
-
-	if err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"pages":   count,
-			"domains": list,
-		})
-	} else {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-		})
-	}
-}
-
-// Удаление домена
-func DomainDelete(c *gin.Context) {
-	var data models.Domains
-	if c.BindJSON(&data) == nil {
-		_, err := models.DeleteDomain(data.ID)
-
-		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
-				"success": true,
-				"result":  "Domain was deleted!",
-			})
-		} else {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"result":  "Not deleted",
 			})
 		}
 	}
