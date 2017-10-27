@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"errors"
 	"../app"
-	"fmt"
 )
 
 const (
@@ -64,9 +63,6 @@ func AllDomains(param string) (domains []Domains, count int, err error) {
 	offset := (page - 1) * limit
 
 	rows, err := app.Query(selectAllDomains, limit, offset)
-
-	fmt.Println(rows)
-	fmt.Println(err)
 
 	row, _ := app.Query(countAllDomains)
 
