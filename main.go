@@ -48,9 +48,11 @@ func main() {
 	})
 
 	router := gin.Default()
-	router.GET("/", Index)
-	router.POST("/api/auth", Auth)
 
+	router.GET("/", Index)
+	router.NoRoute(PageNotFound)
+
+	router.POST("/api/auth", Auth)
 	router.DELETE("/api/user-delete", UserDelete)
 	router.POST("/api/user-create", UserCreate)
 	router.POST("/api/user-change-status", UserChangeStatus)
@@ -68,6 +70,14 @@ func main() {
 	} else {
 		router.Run(app.Config.ServerPort)
 	}
+}
+
+// Custom Not Found (404) page
+func PageNotFound(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"error": 404,
+		"message": "Page not found",
+	})
 }
 
 func Index(c *gin.Context) {
