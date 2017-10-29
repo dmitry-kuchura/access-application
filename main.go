@@ -97,7 +97,10 @@ func AuthRequired() gin.HandlerFunc {
 		// No token No Party
 		if err == true {
 			log.Println("no auth")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   http.StatusUnauthorized,
+				"message": "invalid Auth-Token!",
+			})
 		}
 		log.Println("after authRequired")
 	}
