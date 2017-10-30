@@ -66,6 +66,7 @@ func DomainDelete(c *gin.Context) {
 	}
 }
 
+// Просмотр одного домена
 func DomainView(c *gin.Context)  {
 	data, err := models.GetDomain(c.Param("page"))
 

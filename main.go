@@ -73,6 +73,13 @@ func main() {
 		domains.DELETE("delete", controllers.DomainDelete)
 	}
 
+	ftp := router.Group("/api/ftp")
+	ftp.Use(AuthRequired())
+	{
+		ftp.POST("create", controllers.FtpCreate)
+		ftp.DELETE("delete", controllers.FtpDelete)
+	}
+
 	router.GET("/ws", func(c *gin.Context) {
 		WebSocketsHandler(c.Writer, c.Request)
 	})
@@ -85,7 +92,7 @@ func main() {
 	}
 }
 
-// Middleware
+// Middleware авторизация
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("before authRequired")
@@ -110,10 +117,11 @@ func AuthRequired() gin.HandlerFunc {
 func PageNotFound(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{
 		"error":   404,
-		"message": "Page not found",
+		"message": "Not found",
 	})
 }
 
+// Главная страница
 func Index(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"success": true,
