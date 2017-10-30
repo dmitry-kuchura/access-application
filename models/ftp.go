@@ -14,6 +14,10 @@ const (
 	deleteFtp = `
 	DELETE FROM ftp WHERE id = ?
 	`
+
+	selectFtp = `
+	SELECT id, hostname, username, password FROM ftp WHERE domain_id = ?
+	`
 )
 
 type Ftp struct {

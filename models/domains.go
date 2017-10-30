@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"../app"
-	"net/http"
 )
 
 const (
@@ -123,8 +122,8 @@ func GetDomain(param string) (domains []Domain, err error) {
 
 	defer row.Close()
 
+	d := Domain{}
 	for row.Next() {
-		d := Domain{}
 		err = row.Scan(&d.ID, &d.Name, &d.Url, &d.Status, &d.Updated)
 		if err != nil {
 			return domains, err
@@ -132,8 +131,6 @@ func GetDomain(param string) (domains []Domain, err error) {
 		domains = append(domains, d)
 	}
 	err = row.Err()
-
-	//app.NewAPIError(http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", err)
 
 	return domains, err
 }
