@@ -1,12 +1,36 @@
-package errors
+package app
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
+	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
 )
+
+// APIError represents an error that can be sent in an error response.
+type APIError struct {
+	// Status represents the HTTP status code
+	Status int `json:"-"`
+	// ErrorCode is the code uniquely identifying an error
+	ErrorCode string `json:"error_code"`
+	// Message is the error message that may be displayed to end users
+	Message string `json:"message"`
+	// DeveloperMessage is the error message that is mainly meant for developers
+	DeveloperMessage string `json:"developer_message,omitempty"`
+	// Details specifies the additional error information
+	Details interface{} `json:"details,omitempty"`
+}
+
+// Error returns the error message.
+func (e APIError) Error() string {
+	return e.Message
+}
+
+// StatusCode returns the HTTP status code.
+func (e APIError) StatusCode() int {
+	return e.Status
+}
 
 type (
 	// Params is used to replace placeholders in an error template with the corresponding values.
@@ -32,16 +56,18 @@ func LoadMessages(file string) error {
 
 // NewAPIError creates a new APIError with the given HTTP status code, error code, and parameters for replacing placeholders in the error template.
 // The param can be nil, indicating there is no need for placeholder replacement.
-func NewAPIError(status int, code string, params Params) *APIError {
+func NewAPIError(status int, code string, params error) *APIError {
 	err := &APIError{
 		Status:    status,
 		ErrorCode: code,
 		Message:   code,
 	}
 
+	param := Params{"error": params.Error()}
+
 	if template, ok := templates[code]; ok {
-		err.Message = template.getMessage(params)
-		err.DeveloperMessage = template.getDeveloperMessage(params)
+		err.Message = template.getMessage(param)
+		err.DeveloperMessage = template.getDeveloperMessage(param)
 	}
 
 	return err

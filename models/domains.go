@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"../app"
+	"net/http"
 )
 
 const (
@@ -131,6 +132,8 @@ func GetDomain(param string) (domains []Domain, err error) {
 		domains = append(domains, d)
 	}
 	err = row.Err()
+
+	//app.NewAPIError(http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", err)
 
 	return domains, err
 }
