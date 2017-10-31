@@ -49,6 +49,11 @@ type Domain struct {
 }
 
 // Добавление домена
+// отправляем пост запрос с данными
+//	{
+//		"name": "gmail.com",
+//		"url": "https://gmail.com"
+//	}
 func CreateDomain(name, url string) (string, error) {
 	if CheckDomain(name, url) {
 		res, err := app.Exec(insertDomain, name, url)
@@ -96,6 +101,9 @@ func AllDomains(param string) (domains []Domain, count int, err error) {
 }
 
 // Удаление домена
+//	{
+//		"id": 5
+//	}
 func DeleteDomain(id int) (bool, error) {
 	_, err := app.Exec(deleteDomain, id)
 
@@ -103,16 +111,6 @@ func DeleteDomain(id int) (bool, error) {
 		return true, nil
 	} else {
 		return false, err
-	}
-}
-
-func CheckDomain(name, url string) bool {
-	res, _ := app.Query(checkDomain, name, url)
-
-	if app.CountRows(res) >= 1 {
-		return false
-	} else {
-		return true
 	}
 }
 
@@ -133,4 +131,14 @@ func GetDomain(param string) (domains []Domain, err error) {
 	err = row.Err()
 
 	return domains, err
+}
+
+func CheckDomain(name, url string) bool {
+	res, _ := app.Query(checkDomain, name, url)
+
+	if app.CountRows(res) >= 1 {
+		return false
+	} else {
+		return true
+	}
 }
