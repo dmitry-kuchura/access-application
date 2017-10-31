@@ -53,7 +53,7 @@ func DomainDelete(c *gin.Context) {
 		_, err := models.DeleteDomain(data.ID)
 
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
+			c.JSON(http.StatusNoContent, gin.H{
 				"success": true,
 				"result":  "Domain was deleted!",
 			})

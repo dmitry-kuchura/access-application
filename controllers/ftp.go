@@ -34,7 +34,7 @@ func FtpDelete(c *gin.Context) {
 		_, err := models.DeleteFtp(data.ID)
 
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{
+			c.JSON(http.StatusNoContent, gin.H{
 				"success": true,
 				"result":  "Was deleted!",
 			})
