@@ -16,7 +16,7 @@ const (
 	`
 
 	selectFtp = `
-	SELECT id, hostname, username, password, status FROM ftp WHERE domain_id = ?
+	SELECT id, hostname, username, password, status, updated_at FROM ftp WHERE domain_id = ?
 	`
 )
 
@@ -46,13 +46,16 @@ func CreateFtp(domain int, hostname, username, password string) (bool, error) {
 func SelectFtps(domain int) (ftps []Ftp, err error) {
 	rows, err := app.Query(selectFtp, domain)
 
+	fmt.Println(rows)
+	fmt.Println(err)
+
 	for rows.Next() {
-		d := Ftp{}
-		err = rows.Scan(&d.ID, &d.Hostname, &d.Username, &d.Password, &d.Status)
+		f := Ftp{}
+		err = rows.Scan(&f.ID, &f.Hostname, &f.Username, &f.Password, &f.Status, &f.UpdatedAt)
 		if err != nil {
 			return ftps, err
 		}
-		ftps = append(ftps, d)
+		ftps = append(ftps, f)
 	}
 	err = rows.Err()
 

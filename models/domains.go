@@ -113,7 +113,7 @@ func GetDomain(param int) (domains []Domain, err error) {
 
 	ftp, err := SelectFtps(param)
 
-	mysql, err := SelectDatabases(param)
+	//mysql, err := SelectDatabases(param)
 
 	for row.Next() {
 		d := Domain{}
