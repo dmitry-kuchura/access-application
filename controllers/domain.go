@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"strconv"
 	"net/http"
 
 	"../models"
 	"github.com/gin-gonic/gin"
-	"fmt"
 )
 
 // Создание домена
@@ -67,9 +67,19 @@ func DomainDelete(c *gin.Context) {
 }
 
 // Просмотр одного домена
-func DomainView(c *gin.Context)  {
-	data, err := models.GetDomain(c.Param("page"))
+func DomainView(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	fmt.Println(data)
-	fmt.Println(err)
+	data, err := models.GetDomain(id)
+
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"result":  data,
+		})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+		})
+	}
 }

@@ -39,21 +39,16 @@ const (
 )
 
 type Domain struct {
-	ID       int        `form:"id" json:"id"`
-	Name     string     `form:"name" json:"name"`
-	Url      string     `form:"url" json:"url"`
-	Status   int        `form:"status" json:"status"`
-	Updated  string     `form:"updated_at" json:"updated_at"`
-	Ftp      []Ftp      `form:"ftp" json:"ftp"`
-	Database []Database `form:"database" json:"database"`
+	ID        int        `form:"id" json:"id"`
+	Name      string     `form:"name" json:"name"`
+	Url       string     `form:"url" json:"url"`
+	Status    int        `form:"status" json:"status"`
+	Updated   string     `form:"updated_at" json:"updated_at"`
+	Ftps      []Ftp      `form:"ftp" json:"ftp"`
+	Databases []Database `form:"database" json:"database"`
 }
 
 // Добавление домена
-// отправляем пост запрос с данными
-//	{
-//		"name": "gmail.com",
-//		"url": "https://gmail.com"
-//	}
 func CreateDomain(name, url string) (string, error) {
 	if CheckDomain(name, url) {
 		res, err := app.Exec(insertDomain, name, url)
@@ -101,9 +96,6 @@ func AllDomains(param string) (domains []Domain, count int, err error) {
 }
 
 // Удаление домена
-//	{
-//		"id": 5
-//	}
 func DeleteDomain(id int) (bool, error) {
 	_, err := app.Exec(deleteDomain, id)
 
@@ -115,17 +107,22 @@ func DeleteDomain(id int) (bool, error) {
 }
 
 // Получение конкретного домена
-func GetDomain(param string) (domains []Domain, err error) {
+func GetDomain(param int) (domains []Domain, err error) {
 	row, err := app.Query(selectDomain, param)
-
 	defer row.Close()
 
-	d := Domain{}
+	ftp, err := SelectFtps(param)
+
+	mysql, err := SelectDatabases(param)
+
 	for row.Next() {
+		d := Domain{}
 		err = row.Scan(&d.ID, &d.Name, &d.Url, &d.Status, &d.Updated)
 		if err != nil {
 			return domains, err
 		}
+
+		d.Ftps = ftp
 		domains = append(domains, d)
 	}
 	err = row.Err()
