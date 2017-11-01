@@ -46,6 +46,8 @@ type Domain struct {
 	Updated   string     `form:"updated_at" json:"updated_at"`
 	Ftps      []Ftp      `form:"ftp" json:"ftp"`
 	Databases []Database `form:"database" json:"database"`
+	Hostings  []Hosting  `form:"hosting" json:"hosting"`
+	Admins    []Admin    `form:"admin" json:"admin"`
 }
 
 // Добавление домена
