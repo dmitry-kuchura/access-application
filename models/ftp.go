@@ -16,7 +16,7 @@ const (
 	`
 
 	selectFtp = `
-	SELECT id, hostname, username, password, status, updated_at FROM ftp WHERE domain_id = ?
+	SELECT id, domain_id, hostname, username, password, status, created_at, updated_at FROM ftp WHERE domain_id = ?
 	`
 )
 
@@ -27,8 +27,8 @@ type Ftp struct {
 	Username  string `form:"username" json:"username"`
 	Password  string `form:"password" json:"password"`
 	Status    int    `form:"status" json:"status"`
-	CreatedAt uint8  `form:"created_at" json:"created_at"`
-	UpdatedAt uint8  `form:"updated_at" json:"updated_at"`
+	CreatedAt string `form:"created_at" json:"created_at"`
+	UpdatedAt string `form:"updated_at" json:"updated_at"`
 }
 
 func CreateFtp(domain int, hostname, username, password string) (bool, error) {
@@ -46,12 +46,9 @@ func CreateFtp(domain int, hostname, username, password string) (bool, error) {
 func SelectFtps(domain int) (ftps []Ftp, err error) {
 	rows, err := app.Query(selectFtp, domain)
 
-	fmt.Println(rows)
-	fmt.Println(err)
-
 	for rows.Next() {
 		f := Ftp{}
-		err = rows.Scan(&f.ID, &f.Hostname, &f.Username, &f.Password, &f.Status, &f.UpdatedAt)
+		err = rows.Scan(&f.ID, &f.DomainID, &f.Hostname, &f.Username, &f.Password, &f.Status, &f.CreatedAt, &f.UpdatedAt)
 		if err != nil {
 			return ftps, err
 		}
