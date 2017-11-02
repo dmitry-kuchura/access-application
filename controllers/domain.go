@@ -6,15 +6,12 @@ import (
 
 	"../models"
 	"github.com/gin-gonic/gin"
-	"fmt"
 )
 
 // Создание домена
 func DomainCreate(c *gin.Context) {
 	var data models.Domain
 	if c.BindJSON(&data) == nil {
-		fmt.Println(data)
-
 		id, err := models.CreateDomain(data.Name, data.Url, data.Description)
 
 		if err == nil {

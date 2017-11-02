@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/dmitry-kuchura/access-application/app"
-	"fmt"
 )
 
 const (
@@ -56,9 +55,6 @@ type Domain struct {
 func CreateDomain(name, url, description string) (string, error) {
 	if CheckDomain(name, url) {
 		res, err := app.Exec(insertDomain, name, url, description)
-
-		fmt.Println(res)
-		fmt.Println(err)
 
 		id, err := res.LastInsertId()
 		if err != nil {
