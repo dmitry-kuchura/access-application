@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Окт 27 2017 г., 15:47
+-- Время создания: Ноя 02 2017 г., 13:17
 -- Версия сервера: 5.7.19
 -- Версия PHP: 7.1.7
 
@@ -25,6 +25,30 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `backend`
+--
+
+CREATE TABLE `backend` (
+  `id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `url` varchar(50) DEFAULT NULL,
+  `login` varchar(50) DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `backend`
+--
+
+INSERT INTO `backend` (`id`, `domain_id`, `url`, `login`, `password`, `status`, `created_at`, `updated_at`) VALUES
+(1, 3, 'http://infocorpus.wezom.net', 'kuchura.d.wezom@gmail.com', 'Swqa12345', 1, '2017-11-02 07:13:10', '2017-11-02 07:13:10');
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `domains`
 --
 
@@ -32,6 +56,7 @@ CREATE TABLE `domains` (
   `id` int(11) NOT NULL,
   `name` varchar(150) NOT NULL,
   `url` varchar(150) NOT NULL,
+  `description` text,
   `status` tinyint(1) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -41,12 +66,11 @@ CREATE TABLE `domains` (
 -- Дамп данных таблицы `domains`
 --
 
-INSERT INTO `domains` (`id`, `name`, `url`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'tirmarket.com.ua', 'http://tirmarket.com.ua', 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
-(2, 'wezom.com.ua', 'https://wezom.com.ua', 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
-(3, 'infocorpus.wezom.net', 'http://infocorpus.wezom.net', 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
-(4, 'lester.com.ua', 'http://lester.com.ua', 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
-(5, 'gmail.com', 'https://gmail.com', 1, '2017-10-27 11:38:13', '2017-10-27 11:38:13');
+INSERT INTO `domains` (`id`, `name`, `url`, `description`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'tirmarket.com.ua', 'http://tirmarket.com.ua', NULL, 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
+(3, 'infocorpus.wezom.net', 'http://infocorpus.wezom.net', NULL, 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
+(4, 'lester.com.ua', 'http://lester.com.ua', NULL, 1, '2017-10-27 11:27:25', '2017-10-27 11:27:25'),
+(6, 'gmail.com', 'https://gmail.com', 'Описание, краткая информация', 1, '2017-11-02 08:31:19', '2017-11-02 08:31:19');
 
 -- --------------------------------------------------------
 
@@ -57,13 +81,46 @@ INSERT INTO `domains` (`id`, `name`, `url`, `status`, `created_at`, `updated_at`
 CREATE TABLE `ftp` (
   `id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
-  `host` int(100) NOT NULL,
-  `login` varchar(50) NOT NULL,
+  `hostname` varchar(150) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
   `status` tinyint(1) NOT NULL,
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `ftp`
+--
+
+INSERT INTO `ftp` (`id`, `domain_id`, `hostname`, `username`, `password`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, '91.200.60.68', 'almetcentr_ftp', 'Y1u3W5x8', 1, '2017-10-30 07:07:38', '2017-10-30 07:07:38'),
+(2, 1, '91.200.60.68', 'almetcentr_ftp_seo', 'F1a3R5x8', 1, '2017-10-31 10:07:38', '2017-10-31 10:07:38'),
+(3, 3, '91.200.60.69', 'infocorpus_ftp', '7J7c9A7v', 1, '2017-11-01 10:07:38', '2017-11-01 10:07:38');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `hosting`
+--
+
+CREATE TABLE `hosting` (
+  `id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `url` varchar(50) DEFAULT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `hosting`
+--
+
+INSERT INTO `hosting` (`id`, `domain_id`, `url`, `username`, `password`, `status`, `created_at`, `updated_at`) VALUES
+(1, 3, '91.200.60.68:3000', 'root', 'GJoy4ewrieurf', 1, '2017-11-02 08:06:00', '2017-11-02 08:06:00');
 
 -- --------------------------------------------------------
 
@@ -74,13 +131,23 @@ CREATE TABLE `ftp` (
 CREATE TABLE `mysql` (
   `id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
-  `hostname` varchar(100) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL,
+  `phpmyadmin` varchar(50) DEFAULT NULL,
+  `hostname` varchar(50) NOT NULL,
+  `database_name` varchar(50) DEFAULT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `mysql`
+--
+
+INSERT INTO `mysql` (`id`, `domain_id`, `phpmyadmin`, `hostname`, `database_name`, `username`, `password`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'http://91.200.60.69/phpmyadmin/', '91.200.60.69', 'test_db', 'test_db', 'I4c9R4z5', 1, '2017-11-01 14:46:18', '2017-11-01 14:46:18'),
+(2, 3, 'http://91.200.60.69/phpmyadmin/', '91.200.60.69', 'infocorpus_db', 'infocorpus_db', '8L8p6I4v', 1, '2017-11-01 14:46:18', '2017-11-01 14:46:18');
 
 -- --------------------------------------------------------
 
@@ -111,6 +178,13 @@ INSERT INTO `users` (`id`, `email`, `password`, `token`, `name`, `role`, `status
 --
 
 --
+-- Индексы таблицы `backend`
+--
+ALTER TABLE `backend`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
 -- Индексы таблицы `domains`
 --
 ALTER TABLE `domains`
@@ -121,6 +195,12 @@ ALTER TABLE `domains`
 --
 ALTER TABLE `ftp`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `hosting`
+--
+ALTER TABLE `hosting`
+  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Индексы таблицы `mysql`
@@ -139,20 +219,30 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT для таблицы `backend`
+--
+ALTER TABLE `backend`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
 -- AUTO_INCREMENT для таблицы `domains`
 --
 ALTER TABLE `domains`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT для таблицы `ftp`
 --
 ALTER TABLE `ftp`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT для таблицы `hosting`
+--
+ALTER TABLE `hosting`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT для таблицы `mysql`
 --
 ALTER TABLE `mysql`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
