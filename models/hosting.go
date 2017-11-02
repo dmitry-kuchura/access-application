@@ -1,6 +1,6 @@
 package models
 
-type Admin struct {
+type Hosting struct {
 	ID        int    `form:"id" json:"id"`
 	Name      string `form:"name" json:"name"`
 	Url       string `form:"url" json:"url"`

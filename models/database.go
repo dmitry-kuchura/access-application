@@ -4,13 +4,14 @@ import "../app"
 
 const (
 	selectMysql = `
-	SELECT id, domain_id, hostname, username, password, status, created_at, updated_at FROM mysql WHERE domain_id = ?
+	SELECT id, domain_id, phpmyadmin, hostname, username, password, status, created_at, updated_at FROM mysql WHERE domain_id = ?
 	`
 )
 
 type Database struct {
 	ID        int    `form:"id" json:"id"`
 	DomainID  int    `form:"domain_id" json:"domain_id"`
+	MyAdmin   string `form:"phpmyadmin" json:"phpmyadmin"`
 	Hostname  string `form:"hostname" json:"hostname"`
 	Username  string `form:"username" json:"username"`
 	Password  string `form:"password" json:"password"`
@@ -24,7 +25,7 @@ func SelectDatabases(domain int) (databases []Database, err error) {
 
 	for rows.Next() {
 		d := Database{}
-		err = rows.Scan(&d.ID, &d.DomainID, &d.Hostname, &d.Username, &d.Password, &d.Status, &d.CreatedAt, &d.UpdatedAt)
+		err = rows.Scan(&d.ID, &d.DomainID, &d.MyAdmin, &d.Hostname, &d.Username, &d.Password, &d.Status, &d.CreatedAt, &d.UpdatedAt)
 		if err != nil {
 			return databases, err
 		}
