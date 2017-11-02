@@ -39,15 +39,16 @@ const (
 )
 
 type Domain struct {
-	ID        int        `form:"id" json:"id"`
-	Name      string     `form:"name" json:"name"`
-	Url       string     `form:"url" json:"url"`
-	Status    int        `form:"status" json:"status"`
-	Updated   string     `form:"updated_at" json:"updated_at"`
-	Ftps      []Ftp      `form:"ftp" json:"ftp"`
-	Databases []Database `form:"database" json:"database"`
-	Hostings  []Hosting  `form:"hosting" json:"hosting"`
-	Admins    []Admin    `form:"admin" json:"admin"`
+	ID          int        `form:"id" json:"id"`
+	Name        string     `form:"name" json:"name"`
+	Url         string     `form:"url" json:"url"`
+	Description string     `form:"description" json:"description"`
+	Status      int        `form:"status" json:"status"`
+	Updated     string     `form:"updated_at" json:"updated_at"`
+	Ftps        []Ftp      `form:"ftp" json:"ftp"`
+	Databases   []Database `form:"database" json:"database"`
+	Hostings    []Hosting  `form:"hosting" json:"hosting"`
+	Admins      []Admin    `form:"admin" json:"admin"`
 }
 
 // Добавление домена
