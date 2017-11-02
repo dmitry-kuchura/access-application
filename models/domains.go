@@ -51,6 +51,14 @@ type Domain struct {
 	Admins      []Admin    `form:"admin" json:"admin"`
 }
 
+type DomainInterface interface {
+	Domain(id int) (*Domain, error)
+	CreateDomain(name, url, description string) (string, error)
+	AllDomains(param string) (domains []Domain, count int, err error)
+	DeleteDomain(id int) (bool, error)
+	GetDomain(param int) (domains []Domain, err error)
+}
+
 // Добавление домена
 func CreateDomain(name, url, description string) (string, error) {
 	if CheckDomain(name, url) {
