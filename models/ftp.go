@@ -1,8 +1,8 @@
 package models
 
 import (
-	"../app"
 	"fmt"
+	"github.com/dmitry-kuchura/access-application/app"
 )
 
 const (

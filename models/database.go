@@ -1,6 +1,6 @@
 package models
 
-import "../app"
+import "github.com/dmitry-kuchura/access-application/app"
 
 const (
 	selectMysql = `

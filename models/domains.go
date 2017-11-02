@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"errors"
 
-	"../app"
+	"github.com/dmitry-kuchura/access-application/app"
 )
 
 const (
