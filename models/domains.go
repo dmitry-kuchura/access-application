@@ -116,6 +116,7 @@ func GetDomain(param int) (domains []Domain, err error) {
 	ftp, err := SelectFtps(param)
 	mysql, err := SelectDatabases(param)
 	admin, err := SelectAdmins(param)
+	hosting, err := SelectHosting(param)
 
 	for row.Next() {
 		d := Domain{}
@@ -127,6 +128,7 @@ func GetDomain(param int) (domains []Domain, err error) {
 		d.Ftps = ftp
 		d.Databases = mysql
 		d.Admins = admin
+		d.Hostings = hosting
 
 		domains = append(domains, d)
 	}
