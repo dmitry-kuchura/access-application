@@ -5,12 +5,13 @@ import (
 	"errors"
 
 	"github.com/dmitry-kuchura/access-application/app"
+	"fmt"
 )
 
 const (
 	insertDomain = `
-	INSERT INTO domains (name, url, status, created_at, updated_at)
-	VALUES(?, ?, 1, NOW(), NOW()) ON DUPLICATE KEY UPDATE
+	INSERT INTO domains (name, url, description, status, created_at, updated_at)
+	VALUES(?, ?, ?, 1, NOW(), NOW()) ON DUPLICATE KEY UPDATE
 	name = VALUES(name)
 	`
 
@@ -52,9 +53,12 @@ type Domain struct {
 }
 
 // Добавление домена
-func CreateDomain(name, url string) (string, error) {
+func CreateDomain(name, url, description string) (string, error) {
 	if CheckDomain(name, url) {
-		res, err := app.Exec(insertDomain, name, url)
+		res, err := app.Exec(insertDomain, name, url, description)
+
+		fmt.Println(res)
+		fmt.Println(err)
 
 		id, err := res.LastInsertId()
 		if err != nil {
