@@ -29,6 +29,28 @@ func DomainCreate(c *gin.Context) {
 	}
 }
 
+// Обновление информации по домену
+func DomainUpdate(c *gin.Context) {
+	var data models.Domain
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	if c.BindJSON(&data) == nil {
+		err := models.UpdateDomain(id, data.Name, data.Url, data.Description, data.Status)
+
+		if err == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"success": true,
+				"result":  "Domain was updated!",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"result":  "Not updated!",
+			})
+		}
+	}
+}
+
 // Список доменов
 func DomainList(c *gin.Context) {
 	list, count, err := models.AllDomains(c.Param("page"))

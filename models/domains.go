@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/dmitry-kuchura/access-application/app"
+	"fmt"
 )
 
 const (
@@ -12,6 +13,10 @@ const (
 	INSERT INTO domains (name, url, description, status, created_at, updated_at)
 	VALUES(?, ?, ?, 1, NOW(), NOW()) ON DUPLICATE KEY UPDATE
 	name = VALUES(name)
+	`
+
+	updateDomain = `
+	UPDATE domains SET name = ?, url = ?, description = ?, status = ?, updated_at = NOW() WHERE id = ?
 	`
 
 	checkDomain = `
@@ -65,6 +70,15 @@ func CreateDomain(name, url, description string) (string, error) {
 		err := errors.New("Domain was already created!")
 		return "", err
 	}
+}
+
+func UpdateDomain(id int, name, url, description string, status int) error {
+	row, err := app.Exec(updateDomain, name, url, description, status, id)
+
+	fmt.Println(row)
+	fmt.Println(err)
+
+	return err
 }
 
 // Список доменов

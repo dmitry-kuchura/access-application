@@ -68,6 +68,7 @@ func main() {
 	domains.Use(AuthRequired())
 	{
 		domains.POST("create", controllers.DomainCreate)
+		domains.PUT("update/:id", controllers.DomainUpdate)
 		domains.GET("view/:id", controllers.DomainView)
 		domains.GET("list/:page", controllers.DomainList)
 		domains.DELETE("delete", controllers.DomainDelete)
