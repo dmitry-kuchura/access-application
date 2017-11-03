@@ -60,6 +60,7 @@ func main() {
 	{
 		user.DELETE("delete", controllers.UserDelete)
 		user.POST("create", controllers.UserCreate)
+		user.PUT("update/:id", controllers.UserUpdate)
 		user.POST("change-status", controllers.UserChangeStatus)
 		user.GET("list/:page", controllers.UserList)
 	}

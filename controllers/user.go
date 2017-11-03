@@ -5,13 +5,14 @@ import (
 
 	"../models"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 // Регистрация пользователей
 func UserCreate(c *gin.Context) {
 	var data models.User
 	if c.BindJSON(&data) == nil {
-		_, err := models.CreateUser(data.Email, data.Password, data.Name)
+		_, err := models.CreateUser(data.Email, data.Password, data.FirstName)
 
 		if err == nil {
 			c.JSON(http.StatusCreated, gin.H{
@@ -22,6 +23,27 @@ func UserCreate(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"success": false,
 				"result":  "Not registered",
+			})
+		}
+	}
+}
+
+func UserUpdate(c *gin.Context) {
+	var data models.User
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	if c.BindJSON(&data) == nil {
+		err := models.UpdateUser(data.Email, data.FirstName, data.SecondName, id)
+
+		if err == nil {
+			c.JSON(http.StatusCreated, gin.H{
+				"success": true,
+				"result":  "You account was updated!",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"result":  "Not updated",
 			})
 		}
 	}
