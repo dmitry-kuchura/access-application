@@ -72,6 +72,7 @@ func CreateDomain(name, url, description string) (string, error) {
 	}
 }
 
+// Обновление информации по домену
 func UpdateDomain(id int, name, url, description string, status int) error {
 	row, err := app.Exec(updateDomain, name, url, description, status, id)
 
