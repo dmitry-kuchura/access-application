@@ -42,7 +42,7 @@ const (
 	`
 
 	selectAllUsers = `
-	SELECT id, first_name, email, token, status, role
+	SELECT id, first_name, second_name, email, token, status, role
 	FROM users
 	LIMIT ?
 	OFFSET ?
@@ -184,7 +184,7 @@ func AllUsers(param string) (users []User, count int, err error) {
 	defer rows.Close()
 	for rows.Next() {
 		u := User{}
-		err = rows.Scan(&u.ID, &u.FirstName, &u.Email, &u.Token, &u.Status, &u.Role)
+		err = rows.Scan(&u.ID, &u.FirstName, &u.SecondName, &u.Email, &u.Token, &u.Status, &u.Role)
 		if err != nil {
 			return users, pages, err
 		}
