@@ -47,16 +47,8 @@ type Domain struct {
 	Updated     string     `form:"updated_at" json:"updated_at"`
 	Ftps        []Ftp      `form:"ftp" json:"ftp"`
 	Databases   []Database `form:"database" json:"database"`
-	Hostings    []Hosting  `form:"hosting" json:"hosting"`
+	Hosting     []Hosting  `form:"hosting" json:"hosting"`
 	Admins      []Admin    `form:"admin" json:"admin"`
-}
-
-type DomainInterface interface {
-	Domain(id int) (*Domain, error)
-	CreateDomain(name, url, description string) (string, error)
-	AllDomains(param string) (domains []Domain, count int, err error)
-	DeleteDomain(id int) (bool, error)
-	GetDomain(param int) (domains []Domain, err error)
 }
 
 // Добавление домена
@@ -137,7 +129,7 @@ func GetDomain(param int) (domains []Domain, err error) {
 		d.Ftps = ftp
 		d.Databases = mysql
 		d.Admins = admin
-		d.Hostings = hosting
+		d.Hosting = hosting
 
 		domains = append(domains, d)
 	}
@@ -146,6 +138,7 @@ func GetDomain(param int) (domains []Domain, err error) {
 	return domains, err
 }
 
+// Проверка на уникальность существовавния вводимого домена
 func CheckDomain(name, url string) bool {
 	res, _ := app.Query(checkDomain, name, url)
 
