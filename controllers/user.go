@@ -13,7 +13,7 @@ import (
 func UserCreate(c *gin.Context) {
 	var data models.User
 	if c.BindJSON(&data) == nil {
-		_, err := models.CreateUser(data.Email, data.Password, data.FirstName)
+		_, err := models.CreateUser(data.Email, data.Password, data.Name)
 
 		if err == nil {
 			c.JSON(http.StatusCreated, gin.H{
