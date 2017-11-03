@@ -6,6 +6,7 @@ import (
 	"../models"
 	"github.com/gin-gonic/gin"
 	"strconv"
+	"fmt"
 )
 
 // Регистрация пользователей
@@ -33,7 +34,7 @@ func UserUpdate(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	if c.BindJSON(&data) == nil {
-		err := models.UpdateUser(data.Email, data.FirstName, data.SecondName, id)
+		err := models.UpdateUser(data.Email, data.Name, id)
 
 		if err == nil {
 			c.JSON(http.StatusCreated, gin.H{
@@ -92,6 +93,8 @@ func UserChangeStatus(c *gin.Context) {
 // Плучение полного списка пользователей
 func UserList(c *gin.Context) {
 	list, count, err := models.AllUsers(c.Param("page"))
+
+	fmt.Println(err)
 
 	if err == nil {
 		c.JSON(http.StatusOK, gin.H{
